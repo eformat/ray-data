@@ -55,10 +55,8 @@ class Load:
 
     def __call__(self, batch):
         print(">>> batch:", batch)
-        pbar = tqdm(total=len(batch))
 
         for x in batch['item']:
-            pbar.update(URL_CHUNK_SIZE)
             websites_list = list()
 
             if self.check_duplicate(x):
@@ -99,7 +97,7 @@ ds = (
     ray.data.from_items(websites)
     .map_batches(
         Load,
-        # workers with one GPU each
+        # workers with one GPU each - scale this depending on ray cluster size
         concurrency=1,
         # Batch size is required if you're using GPUs.
         batch_size=URL_CHUNK_SIZE,
